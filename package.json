@@ -1,0 +1,18 @@
+{
+  "name": "back-onboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "5.1.0",
+    "graphql": "16.11.0",
+    "graphql-http": "1.22.4",
+    "ruru": "2.0.0-0.13"
+  },
+  "type": "module"
+}
