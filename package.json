@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc -p tsconfig.json && node dist/index.js",
-    "dev": "nodemon --watch 'src/' --exec 'tsx src/index.ts' -e ts"
+    "dev": "nodemon --watch 'src/' --exec 'tsx src/index.ts' -e ts",
+    "migrate": "prisma migrate dev"
   },
   "type": "module",
   "author": "",
@@ -17,6 +18,7 @@
     "@biomejs/biome": "2.2.0",
     "@types/node": "24.3.0",
     "nodemon": "3.1.10",
+    "prisma": "6.14.0",
     "tsx": "4.20.4",
     "typescript": "5.9.2"
   }
