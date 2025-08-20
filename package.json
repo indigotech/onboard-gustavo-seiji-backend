@@ -1,0 +1,15 @@
+{
+  "name": "back-onboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "type":"module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "5.5.0"
+  }
+}
