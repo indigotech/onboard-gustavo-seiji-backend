@@ -1,12 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "files": {
-    "ignore": [
-      "**/node_modules/*",
-      "**/dist/*",
-      "**/static/*",
-      "**/generated/*",
-      "**/cache/*"
+    "includes": [
+      "**",
+      "!**/node_modules/**/*",
+      "!**/dist/**/*",
+      "!**/static/**/*",
+      "!**/generated/**/*",
+      "!**/cache/**/*"
     ]
   },
   "linter": {
@@ -19,9 +20,12 @@
         "noBannedTypes": "warn"
       },
       "suspicious": {
-        "noConsoleLog": "warn",
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noConsole": {
+          "level": "warn",
+          "options": { "allow": ["error", "info"] }
+        }
       },
       "style": {
         "noNonNullAssertion": "off",
@@ -53,7 +57,6 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 120,
-    "ignore": [],
     "lineEnding": "lf"
   }
 }
