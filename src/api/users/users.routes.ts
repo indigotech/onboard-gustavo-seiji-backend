@@ -7,16 +7,11 @@ import type {
   RegisterOptions,
   RouteGenericInterface,
 } from 'fastify';
-
-interface UserData {
-  email: string;
-  password: string;
-  name: string;
-  birthdate: string;
-}
+import type { CreateUserRequestBody, CreateUserResponse } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
-  Body: UserData;
+  Body: CreateUserRequestBody;
+  Reply: CreateUserResponse;
 }
 
 export const userRoutes: FastifyPluginCallback = (
@@ -29,7 +24,14 @@ export const userRoutes: FastifyPluginCallback = (
 
     const user = await createUserUseCase(request.body);
 
-    reply.code(201).send(user);
+    const userResponse: CreateUserResponse = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthdate: user.birthDate,
+    };
+
+    reply.code(201).send(userResponse);
   });
 
   done();
