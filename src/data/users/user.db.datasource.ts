@@ -21,7 +21,7 @@ export const findByEmail = async (email: string): Promise<User | null> => {
   });
 };
 
-export const UserDatasource = {
+export const UserDbDatasource = {
   create,
   findByEmail,
 };
