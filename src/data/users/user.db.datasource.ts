@@ -13,7 +13,7 @@ export const createUser = async (data: UserData): Promise<User> => {
   });
 };
 
-export const findUserByEmail = async (email: string): Promise<User | null> => {
+export const findByEmail = async (email: string): Promise<User | null> => {
   return prisma.user.findUnique({
     where: {
       email,
@@ -23,5 +23,5 @@ export const findUserByEmail = async (email: string): Promise<User | null> => {
 
 export const UserDatasource = {
   createUser,
-  findUserByEmail,
+  findByEmail,
 };
