@@ -1,6 +1,13 @@
-export interface UserData {
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  birthDate: Date;
+}
+
+export interface UserInput {
   email: string;
   password: string;
   name: string;
-  birthdate: string;
+  birthDate: string;
 }

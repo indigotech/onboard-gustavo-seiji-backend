@@ -28,7 +28,7 @@ export const userRoutes: FastifyPluginCallback = (
       id: user.id,
       name: user.name,
       email: user.email,
-      birthdate: user.birthDate,
+      birthDate: user.birthDate,
     };
 
     reply.code(201).send(userResponse);

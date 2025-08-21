@@ -1,13 +1,5 @@
-export interface CreateUserRequestBody {
-  email: string;
-  password: string;
-  name: string;
-  birthdate: string;
-}
+import type { User, UserInput } from '@models/users.model.js';
 
-export interface CreateUserResponse {
-  id: number;
-  name: string;
-  email: string;
-  birthdate: Date;
-}
+export interface CreateUserRequestBody extends UserInput {}
+
+export interface CreateUserResponse extends User {}

@@ -1,14 +1,13 @@
 import { prisma } from '@core/db/db.js';
-import type { UserData } from '@models/users.model.js';
-import type { User } from '@prisma/client';
+import type { User, UserInput } from '@models/users.model.js';
 
-export const create = async (data: UserData): Promise<User> => {
+export const create = async (data: UserInput): Promise<User> => {
   return prisma.user.create({
     data: {
       email: data.email,
       password: data.password,
       name: data.name,
-      birthDate: new Date(Date.parse(data.birthdate)),
+      birthDate: new Date(Date.parse(data.birthDate)),
     },
   });
 };

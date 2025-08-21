@@ -1,8 +1,7 @@
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
-import type { UserData } from '@models/users.model.js';
-import type { User } from '@prisma/client';
+import type { User, UserInput } from '@models/users.model.js';
 
-export const createUserUseCase = async (data: UserData): Promise<User> => {
+export const createUserUseCase = async (data: UserInput): Promise<User> => {
   const user = await UserDbDatasource.findByEmail(data.email);
 
   if (user) {
