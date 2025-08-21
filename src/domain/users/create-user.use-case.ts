@@ -1,9 +1,10 @@
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import type { User, UserInput } from '@models/users.model.js';
+import { hash } from 'bcrypt';
 
 const LETTER_REGEX = /[a-z]/i;
 
-const DIGIT_REGEX = /\d/g;
+const DIGIT_REGEX = /\d/;
 
 const EMAIL_REGEX = /([@][a-z]+.com)/i;
 
@@ -16,7 +17,15 @@ export const createUserUseCase = async (data: UserInput): Promise<User> => {
     throw new Error('User already exists');
   }
 
+  data.password = await hashPassword(data.password);
+
   return UserDbDatasource.create(data);
+};
+
+const hashPassword = async (password: string): Promise<string> => {
+  const salt = process.env.ENCRYPTION_SALT;
+
+  return hash(password, salt);
 };
 
 const validateFields = (data: UserInput): void => {
