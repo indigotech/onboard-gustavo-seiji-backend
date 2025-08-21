@@ -9,5 +9,5 @@ export const createUserUseCase = async (data: UserData): Promise<User> => {
     throw new Error('User already exists');
   }
 
-  return UserDatasource.createUser(data);
+  return UserDatasource.create(data);
 };

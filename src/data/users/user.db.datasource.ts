@@ -2,7 +2,7 @@ import { prisma } from '@core/db/db.js';
 import type { UserData } from '@models/users.model.js';
 import type { User } from '@prisma/client';
 
-export const createUser = async (data: UserData): Promise<User> => {
+export const create = async (data: UserData): Promise<User> => {
   return prisma.user.create({
     data: {
       email: data.email,
@@ -22,6 +22,6 @@ export const findByEmail = async (email: string): Promise<User | null> => {
 };
 
 export const UserDatasource = {
-  createUser,
+  create,
   findByEmail,
 };
