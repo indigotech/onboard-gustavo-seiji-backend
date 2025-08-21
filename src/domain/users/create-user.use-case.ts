@@ -34,10 +34,6 @@ const validateFields = (data: UserInput): void => {
   }
 
   if (!LETTER_REGEX.test(data.password) || !DIGIT_REGEX.test(data.password)) {
-    console.log(data.password);
-    console.log(!LETTER_REGEX.test(data.password));
-    console.log(!DIGIT_REGEX.test(data.password));
-    console.log(!LETTER_REGEX.test(data.password) || !DIGIT_REGEX.test(data.password));
     throw new Error('Password must contain at least one letter and one digit');
   }
 
