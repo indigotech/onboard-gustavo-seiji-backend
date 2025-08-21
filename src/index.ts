@@ -1,5 +1,8 @@
+import { configureServer } from '@core/db/config.js';
 import fastify from 'fastify';
 import { userRoutes } from './api/users/users.routes.js';
+
+configureServer();
 
 const server = fastify();
 

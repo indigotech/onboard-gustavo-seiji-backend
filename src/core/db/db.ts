@@ -1,21 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+export let prisma: PrismaClient;
 
-export const prismaQuery = async <T>(query: (prisma: PrismaClient) => Promise<T>): Promise<T> => {
+export const configureDatabase = async (): Promise<void> => {
+  prisma = new PrismaClient();
+
   await prisma.$connect();
-
-  try {
-    const data = await query(prisma);
-
-    await prisma.$disconnect();
-
-    return data;
-  } catch (err) {
-    console.error(err);
-
-    await prisma.$disconnect();
-
-    throw new Error('Database query failed');
-  }
 };
