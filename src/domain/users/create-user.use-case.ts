@@ -7,6 +7,18 @@ const DIGIT_REGEX = /\d/g;
 
 const EMAIL_REGEX = /([@][a-z]+.com)/i;
 
+export const createUserUseCase = async (data: UserInput): Promise<User> => {
+  validateFields(data);
+
+  const user = await UserDbDatasource.findByEmail(data.email);
+
+  if (user) {
+    throw new Error('User already exists');
+  }
+
+  return UserDbDatasource.create(data);
+};
+
 const validateFields = (data: UserInput): void => {
   if (data.password.length < 6) {
     throw new Error('Password must be at least 6 characters long');
@@ -28,16 +40,4 @@ const validateFields = (data: UserInput): void => {
   if (formattedBirthdate > new Date()) {
     throw new Error('Birthdate must be in the past');
   }
-};
-
-export const createUserUseCase = async (data: UserInput): Promise<User> => {
-  validateFields(data);
-
-  const user = await UserDbDatasource.findByEmail(data.email);
-
-  if (user) {
-    throw new Error('User already exists');
-  }
-
-  return UserDbDatasource.create(data);
 };
