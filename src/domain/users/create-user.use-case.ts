@@ -1,5 +1,7 @@
-import { UserDbDatasource } from '@data/users/user.db.datasource.js';
-import type { User, UserInput } from '@models/users.model.js';
+import { UserDatasource, UserDbDatasource } from '@data/users/user.db.datasource.js';
+import type { User, UserData, UserInput } from '@models/users.model.js';
+import type { User } from '@prisma/client';
+import { genSalt, hash } from 'bcrypt';
 
 const LETTER_REGEX = /[a-z]/i;
 
@@ -7,14 +9,24 @@ const DIGIT_REGEX = /\d/g;
 
 const EMAIL_REGEX = /([@][a-z]+.com)/i;
 
-export const createUserUseCase = async (data: UserInput): Promise<User> => {
-  validateFields(data);
+const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = Math.floor(Math.random() * 2 + 10);
 
-  const user = await UserDbDatasource.findByEmail(data.email);
+  const salt = await genSalt(saltRounds);
+
+  return hash(password, salt);
+};
+
+export const createUserUseCase = async (data: UserData): Promise<User> => {
+  validateFields(data);
+  
+  const user = await UserDatasource.findUserByEmail(data.email);
 
   if (user) {
     throw new Error('User already exists');
   }
+
+  data.password = await hashPassword(data.password);
 
   return UserDbDatasource.create(data);
 };
@@ -40,4 +52,3 @@ const validateFields = (data: UserInput): void => {
   if (formattedBirthdate > new Date()) {
     throw new Error('Birthdate must be in the past');
   }
-};
