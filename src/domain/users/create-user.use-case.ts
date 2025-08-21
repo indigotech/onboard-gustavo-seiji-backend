@@ -1,7 +1,7 @@
 import { UserDatasource, UserDbDatasource } from '@data/users/user.db.datasource.js';
 import type { User, UserData, UserInput } from '@models/users.model.js';
 import type { User } from '@prisma/client';
-import { genSalt, hash } from 'bcrypt';
+import { hash } from 'bcrypt';
 
 const LETTER_REGEX = /[a-z]/i;
 
@@ -10,9 +10,7 @@ const DIGIT_REGEX = /\d/g;
 const EMAIL_REGEX = /([@][a-z]+.com)/i;
 
 const hashPassword = async (password: string): Promise<string> => {
-  const saltRounds = Math.floor(Math.random() * 2 + 10);
-
-  const salt = await genSalt(saltRounds);
+  const salt = process.env.ENCRYPTION_SALT;
 
   return hash(password, salt);
 };
