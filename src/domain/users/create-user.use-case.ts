@@ -21,7 +21,7 @@ const validateFields = (data: UserInput): void => {
   }
 
   const formattedBirthdate = new Date(data.birthDate);
-  if (isNaN(formattedBirthdate.getTime())) {
+  if (Number.isNaN(formattedBirthdate.getTime())) {
     throw new Error('Invalid birthdate format');
   }
 
