@@ -1,4 +1,4 @@
-import type { User, UserInput } from '@models/users.model.js';
+import type { User, UserInput } from '@domain/models/users.model.js';
 
 export interface CreateUserRequestBody extends UserInput {}
 

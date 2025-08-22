@@ -5,7 +5,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "paths": {
-      "@models/*": ["./src/models/*"],
+      "@models/*": ["./src/domain/models/*"],
       "@api/*": ["./src/api/*"],
       "@core/*": ["./src/core/*"],
       "@domain/*": ["./src/domain/*"],
