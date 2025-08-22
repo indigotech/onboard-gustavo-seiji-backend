@@ -36,7 +36,7 @@ export const authRoutes: FastifyPluginCallback = (
       },
     };
 
-    reply.code(200).send(authResponse);
+    reply.code(201).send(authResponse);
   });
 
   fastify.setErrorHandler<BaseError>(errorHandler);

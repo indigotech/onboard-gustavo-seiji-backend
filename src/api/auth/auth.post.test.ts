@@ -12,13 +12,19 @@ const USER_TO_CREATE = {
 };
 
 describe('User Authentication', () => {
+  before(async () => {
+    await prisma.user.create({
+      data: { ...USER_TO_CREATE, password: await hash(USER_TO_CREATE.password) },
+    });
+  });
+
   it('should authenticate a user', async () => {
     const response = await axios.post('http://localhost:8080/auth', {
       email: USER_TO_CREATE.email,
       password: USER_TO_CREATE.password,
     });
 
-    expect(response.status).to.equal(200);
+    expect(response.status).to.equal(201);
 
     const user = response.data.user;
 
@@ -26,19 +32,13 @@ describe('User Authentication', () => {
       where: { email: USER_TO_CREATE.email },
     });
 
-    expect(response.data).to.have.property('token');
+    expect(response.data).to.have.property('token'); //TODO: test using .to.be.deep.eq after token implementation
     assert(dbUser !== null);
     assert(user !== null);
     expect(user.id).to.equal(dbUser.id);
     expect(user.name).to.equal(dbUser.name);
     expect(user.email).to.equal(dbUser.email);
     expect(user.birthDate).to.equal(dbUser.birthDate.toISOString());
-  });
-
-  before(async () => {
-    await prisma.user.create({
-      data: { ...USER_TO_CREATE, password: await hash(USER_TO_CREATE.password) },
-    });
   });
 
   after(async () => {
