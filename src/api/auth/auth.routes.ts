@@ -24,9 +24,19 @@ export const authRoutes: FastifyPluginCallback = (
   fastify.post<AuthRoute>('/', async (request: FastifyRequest<AuthRoute>, reply: FastifyReply) => {
     console.info('Received auth request');
 
-    const user = await authUseCase(request.body);
+    const authData = await authUseCase(request.body);
 
-    reply.code(200).send(user);
+    const authResponse: AuthResponse = {
+      token: authData.token,
+      user: {
+        id: authData.user.id,
+        email: authData.user.email,
+        name: authData.user.name,
+        birthDate: authData.user.birthDate,
+      },
+    };
+
+    reply.code(200).send(authResponse);
   });
 
   fastify.setErrorHandler<BaseError>(errorHandler);
