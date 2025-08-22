@@ -1,4 +1,6 @@
+import { errorHandler } from '@api/common/error-handler.js';
 import { authUseCase } from '@domain/auth/auth.use-case.js';
+import type { BaseError } from '@models/error.model.js';
 import type {
   FastifyInstance,
   FastifyPluginCallback,
@@ -26,6 +28,8 @@ export const authRoutes: FastifyPluginCallback = (
 
     reply.code(200).send(user);
   });
+
+  fastify.setErrorHandler<BaseError>(errorHandler);
 
   done();
 };
