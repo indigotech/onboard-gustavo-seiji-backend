@@ -1,13 +1,15 @@
 import { userRoutes } from '@api/users/users.routes.js';
 import { configureDatabase } from '@core/db/db.js';
 import { configureEnv } from '@core/env/env.js';
-import fastify from 'fastify';
+import fastify, { type FastifyInstance } from 'fastify';
+
+export let server: FastifyInstance;
 
 export const configureServer = async (envPath: string): Promise<void> => {
   configureEnv(envPath);
   await configureDatabase();
 
-  const server = await fastify();
+  server = await fastify();
 
   await server.register(userRoutes, { prefix: '/users' });
 
