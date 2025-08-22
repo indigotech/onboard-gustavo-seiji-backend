@@ -1,3 +1,3 @@
 import { configureServer } from './server.config.js';
 
-await configureServer();
+await configureServer('.env');

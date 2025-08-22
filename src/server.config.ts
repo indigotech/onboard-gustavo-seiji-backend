@@ -1,8 +1,10 @@
 import { userRoutes } from '@api/users/users.routes.js';
 import { configureDatabase } from '@core/db/db.js';
-import fastify from 'fastify';
+import { configureEnv } from '@core/env/env.js';
+import fastify, { type FastifyInstance } from 'fastify';
 
-export const configureServer = async (): Promise<void> => {
+export const configureServer = async (envPath: string): Promise<FastifyInstance> => {
+  configureEnv(envPath);
   await configureDatabase();
 
   const server = await fastify();
@@ -20,4 +22,6 @@ export const configureServer = async (): Promise<void> => {
   } catch (error: any) {
     console.error(`Error starting server: ${error.message}`);
   }
+
+  return server;
 };
