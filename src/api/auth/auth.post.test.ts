@@ -1,6 +1,7 @@
 import { after, before, describe, it } from 'node:test';
 import { prisma } from '@core/db/db.js';
 import { hash } from '@core/encryption/hash.js';
+import { REMEMBER_ME_EXPIRATION_TIME } from '@domain/auth/auth.use-case.js';
 import axios from 'axios';
 import { assert, expect } from 'chai';
 import jwt from 'jsonwebtoken';
@@ -56,7 +57,7 @@ describe('User Authentication', () => {
     assert(typeof decodedToken !== 'string');
 
     const currentTime = Math.floor(Date.now() / 1000);
-    expect(decodedToken.exp).to.be.equal(currentTime + 60 * 60 * 24 * 7);
+    expect(decodedToken.exp).to.be.equal(currentTime + REMEMBER_ME_EXPIRATION_TIME);
   });
 
   after(async () => {

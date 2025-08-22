@@ -3,6 +3,9 @@ import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import { type Auth, AuthErrors, type AuthInput } from '@models/auth.model.js';
 import jwt from 'jsonwebtoken';
 
+export const COMMON_EXPIRATION_TIME = 60 * 30;
+export const REMEMBER_ME_EXPIRATION_TIME = 60 * 60 * 24 * 7;
+
 export const authUseCase = async (data: AuthInput): Promise<Auth> => {
   const user = await UserDbDatasource.findByEmail(data.email);
 
@@ -15,9 +18,9 @@ export const authUseCase = async (data: AuthInput): Promise<Auth> => {
   let expirationTime: number;
 
   if (data.rememberMe) {
-    expirationTime = 60 * 60 * 24 * 7;
+    expirationTime = REMEMBER_ME_EXPIRATION_TIME;
   } else {
-    expirationTime = 60 * 30;
+    expirationTime = COMMON_EXPIRATION_TIME;
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
