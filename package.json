@@ -7,7 +7,7 @@
     "start": "tsc -p tsconfig.json && node dist/index.js",
     "dev": "nodemon --watch 'src/' --exec 'tsx src/index.ts' -e ts",
     "migrate": "prisma migrate dev",
-    "test": "mocha --require tsx ./tests/*.test.ts"
+    "test": "mocha --require tsx src/tests/index.ts"
   },
   "type": "module",
   "author": "",

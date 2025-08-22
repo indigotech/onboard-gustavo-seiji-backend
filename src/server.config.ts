@@ -5,19 +5,19 @@ import fastify from 'fastify';
 export const configureServer = async (): Promise<void> => {
   await configureDatabase();
 
-  const server = fastify();
+  const server = await fastify();
 
-  server.register(userRoutes, { prefix: '/users' });
+  await server.register(userRoutes, { prefix: '/users' });
 
   server.get('/hello', () => {
     return 'Hello World!';
   });
 
-  server.listen({ port: 8080 }, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.info(`Server listening at ${address}`);
-  });
+  try {
+    const serverResponse = await server.listen({ port: 8080 });
+
+    console.info(`Server listening at ${serverResponse}`);
+  } catch (error: any) {
+    console.error(`Error starting server: ${error.message}`);
+  }
 };
