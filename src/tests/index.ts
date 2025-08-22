@@ -1,12 +1,15 @@
 import { after, before } from 'node:test';
 import { prisma } from '@core/db/db.js';
-import { configureServer, server } from '@src/server.config.js';
+import { configureServer } from '@src/server.config.js';
+
+let server: FastifyInstance;
 
 before(async () => {
-  await configureServer('test.env');
+  server = await configureServer('test.env');
 });
 
 import '@api/users/users.post.test.js';
+import type { FastifyInstance } from 'fastify';
 
 after(async () => {
   await prisma.$disconnect();

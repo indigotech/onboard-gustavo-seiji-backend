@@ -1,7 +1,7 @@
 import { after, describe, it } from 'node:test';
 import { prisma } from '@core/db/db.js';
 import axios from 'axios';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 
 const USER_TO_CREATE = {
   name: 'John Doe',
@@ -27,13 +27,11 @@ describe('User Creation', () => {
 
     expect(response.data).to.deep.eq(expectedResponse);
 
-    const userInDb = await prisma.user.findUnique({
+    const userInDb = (await prisma.user.findUnique({
       where: {
         id: userId,
       },
-    });
-
-    assert(userInDb !== null);
+    }))!;
 
     expect(userInDb.name).to.equal(USER_TO_CREATE.name);
     expect(userInDb.email).to.equal(USER_TO_CREATE.email);
