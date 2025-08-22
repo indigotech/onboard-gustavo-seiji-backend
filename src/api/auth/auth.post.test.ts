@@ -28,19 +28,19 @@ describe('User Authentication', () => {
 
     expect(response.status).to.equal(201);
 
-    const user = response.data.user;
-
-    const dbUser = await prisma.user.findFirst({
+    const dbUser = (await prisma.user.findFirst({
       where: { email: USER_TO_CREATE.email },
-    });
+    }))!;
 
-    expect(response.data).to.have.property('token'); //TODO: test using .to.be.deep.eq after token implementation
-    assert(dbUser !== null);
-    assert(user !== null);
-    expect(user.id).to.equal(dbUser.id);
-    expect(user.name).to.equal(dbUser.name);
-    expect(user.email).to.equal(dbUser.email);
-    expect(user.birthDate).to.equal(dbUser.birthDate.toISOString());
+    expect(response.data).to.be.deep.eq({
+      token: response.data.token,
+      user: {
+        id: dbUser.id,
+        email: dbUser.email,
+        name: dbUser.name,
+        birthDate: dbUser.birthDate.toISOString(),
+      },
+    });
   });
 
   it('should have extended token duration', async () => {
@@ -50,7 +50,7 @@ describe('User Authentication', () => {
       rememberMe: true,
     });
 
-    expect(response.status).to.equal(200);
+    expect(response.status).to.equal(201);
     expect(response.data).to.have.property('token');
 
     const decodedToken = jwt.verify(response.data.token, process.env.JWT_SECRET);
