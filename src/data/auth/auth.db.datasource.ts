@@ -9,12 +9,7 @@ export const authDbDatasource = async (data: AuthInput): Promise<Auth> => {
   }
 
   return {
-    user: {
-      id: 12,
-      name: 'User Name',
-      email: 'user@email.com',
-      birthDate: new Date(),
-    },
+    user,
     token: 'the_token',
   };
 };
