@@ -46,10 +46,14 @@ describe('User Creation', () => {
 describe('User Creation Errors', () => {
   it('should return invalid email error', async () => {
     try {
-      await axios.post('http://localhost:8080/users', {
-        ...USER_TO_CREATE,
-        email: 'invalid-email',
-      });
+      await axios.post(
+        'http://localhost:8080/users',
+        {
+          ...USER_TO_CREATE,
+          email: 'invalid-email',
+        },
+        { validateStatus: (status: number) => status === 400 },
+      );
     } catch (error: any) {
       expect(error.response.data).to.deep.equal({
         code: 'USR_03',

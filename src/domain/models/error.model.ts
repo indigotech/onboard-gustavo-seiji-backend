@@ -1,6 +1,6 @@
-export interface BaseError {
+export interface BaseError extends Error {
   code: string;
   message: string;
-  details: string;
+  details?: string;
   status: number;
 }

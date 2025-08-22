@@ -7,7 +7,7 @@ export const configureServer = async (envPath: string): Promise<FastifyInstance>
   configureEnv(envPath);
   await configureDatabase();
 
-  const server = await fastify();
+  const server = await fastify({ allowErrorHandlerOverride: true });
 
   await server.register(userRoutes, { prefix: '/users' });
 
