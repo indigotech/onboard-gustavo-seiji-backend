@@ -1,8 +1,10 @@
 import { userRoutes } from '@api/users/users.routes.js';
 import { configureDatabase } from '@core/db/db.js';
+import { configureEnv } from '@core/env/env.js';
 import fastify from 'fastify';
 
-export const configureServer = async (): Promise<void> => {
+export const configureServer = async (envPath: string): Promise<void> => {
+  configureEnv(envPath);
   await configureDatabase();
 
   const server = await fastify();

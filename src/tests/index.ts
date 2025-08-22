@@ -1,8 +1,13 @@
-import { before } from 'node:test';
+import { after, before } from 'node:test';
+import { prisma } from '@core/db/db.js';
 import { configureServer } from '@src/server.config.js';
 
 before(async () => {
-  await configureServer();
+  await configureServer('test.env');
 });
 
-import './users/users.post.js';
+import '@api/users/users.post.test.js';
+
+after(async () => {
+  await prisma.$disconnect();
+});
