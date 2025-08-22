@@ -45,115 +45,124 @@ describe('User Creation', () => {
 
 describe('User Creation Errors', () => {
   it('should return invalid email error', async () => {
-    try {
-      await axios.post(
-        'http://localhost:8080/users',
-        {
-          ...USER_TO_CREATE,
-          email: 'invalid-email',
-        },
-        { validateStatus: (status: number) => status === 400 },
-      );
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_03',
-        message: 'Invalid email format',
-        details: 'Email must be a valid email address.',
-        status: 400,
-      });
-    }
+    const response = await axios.post(
+      'http://localhost:8080/users',
+      {
+        ...USER_TO_CREATE,
+        email: 'invalid-email',
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
+
+    expect(response.status).to.equal(422);
+
+    expect(response.data).to.deep.equal({
+      code: 'USR_03',
+      message: 'Invalid email format',
+      details: 'Email must be a valid email address.',
+    });
   });
 
   it('should return invalid password error', async () => {
-    try {
-      await axios.post('http://localhost:8080/users', {
+    const responseShortPassword = await axios.post(
+      'http://localhost:8080/users',
+      {
         ...USER_TO_CREATE,
         password: 'short',
-      });
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_02',
-        message: 'Invalid password',
-        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
-        status: 400,
-      });
-    }
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
 
-    try {
-      await axios.post('http://localhost:8080/users', {
+    expect(responseShortPassword.status).to.equal(422);
+    expect(responseShortPassword.data).to.deep.equal({
+      code: 'USR_02',
+      message: 'Invalid password',
+      details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+    });
+
+    const responseNumberPassword = await axios.post(
+      'http://localhost:8080/users',
+      {
         ...USER_TO_CREATE,
         password: '123456',
-      });
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_02',
-        message: 'Invalid password',
-        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
-        status: 400,
-      });
-    }
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
 
-    try {
-      await axios.post('http://localhost:8080/users', {
+    expect(responseNumberPassword.status).to.equal(422);
+    expect(responseNumberPassword.data).to.deep.equal({
+      code: 'USR_02',
+      message: 'Invalid password',
+      details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+    });
+
+    const response = await axios.post(
+      'http://localhost:8080/users',
+      {
         ...USER_TO_CREATE,
         password: 'password',
-      });
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_02',
-        message: 'Invalid password',
-        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
-        status: 400,
-      });
-    }
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
+
+    expect(response.status).to.equal(422);
+    expect(response.data).to.deep.equal({
+      code: 'USR_02',
+      message: 'Invalid password',
+      details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+    });
   });
 
   it('should return invalid birthdate error', async () => {
-    try {
-      await axios.post('http://localhost:8080/users', {
+    const responseInvalidDate = await axios.post(
+      'http://localhost:8080/users',
+      {
         ...USER_TO_CREATE,
         birthDate: 'invalid-date',
-      });
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_04',
-        message: 'Invalid birthdate format',
-        details: 'Birthdate must be a valid date in the past.',
-        status: 400,
-      });
-    }
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
+
+    expect(responseInvalidDate.status).to.equal(422);
+    expect(responseInvalidDate.data).to.deep.equal({
+      code: 'USR_04',
+      message: 'Invalid birthdate format',
+      details: 'Birthdate must be a valid date in the past.',
+    });
 
     const futureDate = new Date();
     futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-    try {
-      await axios.post('http://localhost:8080/users', {
+    const responseFutureDate = await axios.post(
+      'http://localhost:8080/users',
+      {
         ...USER_TO_CREATE,
         birthDate: futureDate.toISOString(),
-      });
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_04',
-        message: 'Invalid birthdate format',
-        details: 'Birthdate must be a valid date in the past.',
-        status: 400,
-      });
-    }
+      },
+      { validateStatus: (status: number) => status === 422 },
+    );
+
+    expect(responseFutureDate.status).to.equal(422);
+    expect(responseFutureDate.data).to.deep.equal({
+      code: 'USR_04',
+      message: 'Invalid birthdate format',
+      details: 'Birthdate must be a valid date in the past.',
+    });
   });
 
   it('should return user already exists error', async () => {
     await axios.post('http://localhost:8080/users', USER_TO_CREATE);
 
-    try {
-      await axios.post('http://localhost:8080/users', USER_TO_CREATE);
-    } catch (error: any) {
-      expect(error.response.data).to.deep.equal({
-        code: 'USR_01',
-        message: 'User already exists',
-        details: 'The email address is already in use.',
-        status: 400,
-      });
-    }
+    const response = await axios.post('http://localhost:8080/users', USER_TO_CREATE, {
+      validateStatus: (status: number) => status === 409,
+    });
+
+    expect(response.status).to.equal(409);
+    expect(response.data).to.deep.equal({
+      code: 'USR_01',
+      message: 'User already exists',
+      details: 'The email address is already in use.',
+    });
   });
 
   after(async () => {
