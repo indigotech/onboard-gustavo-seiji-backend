@@ -1,6 +1,6 @@
+import { hash } from '@core/encryption/hash.js';
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import { type User, UserErrors, type UserInput } from '@domain/models/users.model.js';
-import { hash } from 'bcrypt';
 
 const LETTER_REGEX = /[a-z]/i;
 
@@ -17,15 +17,9 @@ export const createUserUseCase = async (data: UserInput): Promise<User> => {
     throw UserErrors.ALREADY_EXISTS;
   }
 
-  data.password = await hashPassword(data.password);
+  data.password = await hash(data.password);
 
   return UserDbDatasource.create(data);
-};
-
-const hashPassword = async (password: string): Promise<string> => {
-  const salt = process.env.ENCRYPTION_SALT;
-
-  return hash(password, salt);
 };
 
 const validateFields = (data: UserInput): void => {

@@ -1,3 +1,4 @@
+import { authRoutes } from '@api/auth/auth.routes.js';
 import { userRoutes } from '@api/users/users.routes.js';
 import { configureDatabase } from '@core/db/db.js';
 import { configureEnv } from '@core/env/env.js';
@@ -7,9 +8,11 @@ export const configureServer = async (envPath: string): Promise<FastifyInstance>
   configureEnv(envPath);
   await configureDatabase();
 
-  const server = await fastify({ allowErrorHandlerOverride: true });
+  const server = await fastify({});
 
   await server.register(userRoutes, { prefix: '/users' });
+
+  await server.register(authRoutes, { prefix: '/auth' });
 
   server.get('/hello', () => {
     return 'Hello World!';
