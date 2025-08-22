@@ -3,6 +3,7 @@ import { prisma } from '@core/db/db.js';
 import type { UserInput } from '@models/users.model.js';
 import axios from 'axios';
 import { expect } from 'chai';
+import jwt from 'jsonwebtoken';
 
 const USER_TO_CREATE = {
   name: 'John Doe',
@@ -11,9 +12,13 @@ const USER_TO_CREATE = {
   birthDate: '1990-01-01T00:00:00.000Z',
 };
 
-const sendTestRequest = async (data: UserInput) => {
+const sendTestRequest = async (data: UserInput, token?: string) => {
+  const validToken = `Bearer ${jwt.sign({ userId: 'test-user-id' }, process.env.JWT_SECRET, { expiresIn: '1h' })}`;
   return axios.post('http://localhost:8080/users', data, {
     validateStatus: () => true,
+    headers: {
+      Authorization: token === undefined ? validToken : token,
+    },
   });
 };
 
@@ -148,5 +153,43 @@ describe('User Creation Errors', () => {
 
   after(async () => {
     await prisma.user.deleteMany({ where: { email: USER_TO_CREATE.email } });
+  });
+
+  it('should be not authenticated', async () => {
+    try {
+      await sendTestRequest(USER_TO_CREATE, '');
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'ERR_01',
+        message: 'User is not authenticated',
+        details: 'The user must be authenticated to access this resource',
+      });
+    }
+  });
+
+  it('should have token expired', async () => {
+    try {
+      const expiredToken = `Bearer ${jwt.sign({ userId: 'test-user-id' }, process.env.JWT_SECRET, { expiresIn: '-1h' })}`;
+      await sendTestRequest(USER_TO_CREATE, expiredToken);
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'ERR_02',
+        message: 'User token has expired',
+        details: 'The user must obtain a new token to access this resource',
+      });
+    }
+  });
+
+  it('should return invalid token error', async () => {
+    try {
+      const invalidToken = `Bearer ${jwt.sign({ userId: 'test-user-id' }, 'random secret', { expiresIn: '1h' })}`;
+      await sendTestRequest(USER_TO_CREATE, invalidToken);
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'ERR_03',
+        message: 'User token is invalid',
+        details: 'The user must provide a valid token to access this resource',
+      });
+    }
   });
 });
