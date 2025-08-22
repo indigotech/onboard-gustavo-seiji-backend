@@ -17,5 +17,6 @@ export const AuthErrors: Record<string, BaseError> = {
     message: 'Invalid credentials.',
     details: 'The email or password provided is incorrect.',
     status: 401,
+    name: 'InvalidCredentialsError',
   },
 };
