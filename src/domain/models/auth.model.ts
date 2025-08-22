@@ -14,7 +14,7 @@ export interface Auth {
 
 export const AuthErrors: Record<string, BaseError> = {
   INVALID_CREDENTIALS: {
-    code: 'AUT_01',
+    code: 'LGN_01',
     message: 'Invalid credentials.',
     details: 'The email or password provided is incorrect.',
     status: 401,
