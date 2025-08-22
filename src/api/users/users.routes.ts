@@ -1,4 +1,5 @@
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
+import type { BaseError } from '@models/error.model.js';
 import type {
   FastifyInstance,
   FastifyPluginCallback,
@@ -32,6 +33,14 @@ export const userRoutes: FastifyPluginCallback = (
     };
 
     reply.code(201).send(userResponse);
+  });
+
+  fastify.setErrorHandler<BaseError>((error, _, reply) => {
+    reply.status(error.status || 500).send({
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    });
   });
 
   done();

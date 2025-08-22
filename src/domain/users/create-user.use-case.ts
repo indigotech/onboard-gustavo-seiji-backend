@@ -1,5 +1,5 @@
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
-import type { User, UserInput } from '@models/users.model.js';
+import { type User, UserErrors, type UserInput } from '@domain/models/users.model.js';
 import { hash } from 'bcrypt';
 
 const LETTER_REGEX = /[a-z]/i;
@@ -14,7 +14,7 @@ export const createUserUseCase = async (data: UserInput): Promise<User> => {
   const user = await UserDbDatasource.findByEmail(data.email);
 
   if (user) {
-    throw new Error('User already exists');
+    throw UserErrors.ALREADY_EXISTS;
   }
 
   data.password = await hashPassword(data.password);
@@ -30,23 +30,23 @@ const hashPassword = async (password: string): Promise<string> => {
 
 const validateFields = (data: UserInput): void => {
   if (data.password.length < 6) {
-    throw new Error('Password must be at least 6 characters long');
+    throw UserErrors.INVALID_PASSWORD;
   }
 
   if (!LETTER_REGEX.test(data.password) || !DIGIT_REGEX.test(data.password)) {
-    throw new Error('Password must contain at least one letter and one digit');
+    throw UserErrors.INVALID_PASSWORD;
   }
 
   if (!EMAIL_REGEX.test(data.email)) {
-    throw new Error('Invalid email format');
+    throw UserErrors.INVALID_EMAIL;
   }
 
   const formattedBirthdate = new Date(data.birthDate);
   if (Number.isNaN(formattedBirthdate.getTime())) {
-    throw new Error('Invalid birthdate format');
+    throw UserErrors.INVALID_BIRTHDATE;
   }
 
   if (formattedBirthdate > new Date()) {
-    throw new Error('Birthdate must be in the past');
+    throw UserErrors.INVALID_BIRTHDATE;
   }
 };
