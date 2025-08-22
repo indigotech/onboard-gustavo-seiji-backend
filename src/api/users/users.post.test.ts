@@ -56,7 +56,6 @@ describe('User Creation', () => {
 });
 
 describe('User Creation Errors', () => {
-  const validToken = `Bearer ${jwt.sign({ userId: 'test-user-id' }, process.env.JWT_SECRET, { expiresIn: '1h' })}`;
   it('should return invalid email error', async () => {
     const response = await sendTestRequest({
       ...USER_TO_CREATE,
