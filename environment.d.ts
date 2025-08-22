@@ -3,6 +3,7 @@ declare global {
     interface ProcessEnv {
       DATABASE_URL: string;
       ENCRYPTION_SALT: string;
+      JWT_SECRET: string;
     }
   }
 }
