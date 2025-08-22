@@ -1,6 +1,7 @@
 import { after, before } from 'node:test';
 import { prisma } from '@core/db/db.js';
 import { configureServer } from '@src/server.config.js';
+import type { FastifyInstance } from 'fastify';
 
 let server: FastifyInstance;
 
@@ -9,7 +10,7 @@ before(async () => {
 });
 
 import '@api/users/users.post.test.js';
-import type { FastifyInstance } from 'fastify';
+import '@api/auth/auth.post.test.js';
 
 after(async () => {
   await prisma.$disconnect();
