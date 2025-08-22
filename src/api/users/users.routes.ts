@@ -24,7 +24,7 @@ export const userRoutes: FastifyPluginCallback = (
   fastify.post<CreateUserRoute>('/', async (request: FastifyRequest<CreateUserRoute>, reply: FastifyReply) => {
     console.info('Received user creation request with data', request.body);
 
-    const user = await createUserUseCase(request.body);
+    const user = await createUserUseCase(request.body, request.headers.authorization);
 
     const userResponse: CreateUserResponse = {
       id: user.id,
