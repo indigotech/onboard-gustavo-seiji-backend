@@ -42,3 +42,110 @@ describe('User Creation', () => {
     await prisma.user.deleteMany({ where: { email: USER_TO_CREATE.email } });
   });
 });
+
+describe('User Creation Errors', () => {
+  it('should return invalid email error', async () => {
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        email: 'invalid-email',
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_03',
+        message: 'Invalid email format',
+        details: 'Email must be a valid email address.',
+      });
+    }
+  });
+
+  it('should return invalid password error', async () => {
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        password: 'short',
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_02',
+        message: 'Invalid password',
+        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+      });
+    }
+
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        password: '123456',
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_02',
+        message: 'Invalid password',
+        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+      });
+    }
+
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        password: 'password',
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_02',
+        message: 'Invalid password',
+        details: 'Password must contain at least one letter and one digit, and at least 6 characters long.',
+      });
+    }
+  });
+
+  it('should return invalid birthdate error', async () => {
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        birthDate: 'invalid-date',
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_04',
+        message: 'Invalid birthdate format',
+        details: 'Birthdate must be a valid date in the past.',
+      });
+    }
+
+    const futureDate = new Date();
+    futureDate.setFullYear(futureDate.getFullYear() + 1);
+
+    try {
+      await axios.post('http://localhost:8080/users', {
+        ...USER_TO_CREATE,
+        birthDate: futureDate.toISOString(),
+      });
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_04',
+        message: 'Invalid birthdate format',
+        details: 'Birthdate must be a valid date in the past.',
+      });
+    }
+  });
+
+  it('should return user already exists error', async () => {
+    await axios.post('http://localhost:8080/users', USER_TO_CREATE);
+
+    try {
+      await axios.post('http://localhost:8080/users', USER_TO_CREATE);
+    } catch (error: any) {
+      expect(error.response.data).to.deep.equal({
+        code: 'USR_01',
+        message: 'User already exists',
+        details: 'The email address is already in use.',
+      });
+    }
+  });
+
+  after(async () => {
+    await prisma.user.deleteMany({ where: { email: USER_TO_CREATE.email } });
+  });
+});
