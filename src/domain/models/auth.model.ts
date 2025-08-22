@@ -16,5 +16,6 @@ export const AuthErrors: Record<string, BaseError> = {
     code: 'AUT_01',
     message: 'Invalid credentials.',
     details: 'The email or password provided is incorrect.',
+    status: 401,
   },
 };
