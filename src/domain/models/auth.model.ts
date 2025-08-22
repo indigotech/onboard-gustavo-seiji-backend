@@ -4,6 +4,7 @@ import type { User } from './users.model.js';
 export interface AuthInput {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface Auth {
