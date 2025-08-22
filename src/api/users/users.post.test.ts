@@ -18,6 +18,15 @@ describe('User Creation', () => {
     expect(response.data).to.have.property('id');
     const userId = response.data.id;
 
+    const expectedResponse = {
+      id: userId,
+      name: USER_TO_CREATE.name,
+      email: USER_TO_CREATE.email,
+      birthDate: USER_TO_CREATE.birthDate,
+    };
+
+    expect(response.data).to.deep.eq(expectedResponse);
+
     const userInDb = await prisma.user.findUnique({
       where: {
         id: userId,
