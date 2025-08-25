@@ -11,6 +11,7 @@
       "@domain/*": ["./src/domain/*"],
       "@data/*": ["./src/data/*"],
       "@src/*": ["./src/*"],
+      "@util/*": ["./src/util/*"]
     },
 
     // Environment Settings

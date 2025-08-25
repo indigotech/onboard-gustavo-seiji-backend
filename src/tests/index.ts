@@ -10,6 +10,7 @@ before(async () => {
 });
 
 import '@api/users/users.post.test.js';
+import '@api/users/users.get.test.js';
 import '@api/auth/auth.post.test.js';
 
 after(async () => {

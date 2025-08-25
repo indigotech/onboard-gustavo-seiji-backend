@@ -1,5 +1,6 @@
 import { errorHandler } from '@api/common/error-handler.js';
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
+import { getUserByIdUseCase } from '@domain/users/get-user-by-id.use-case.js';
 import type { BaseError } from '@models/error.model.js';
 import type {
   FastifyInstance,
@@ -9,11 +10,16 @@ import type {
   RegisterOptions,
   RouteGenericInterface,
 } from 'fastify';
-import type { CreateUserRequestBody, CreateUserResponse } from './users.schema.js';
+import type { CreateUserRequestBody, UserResponse } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
   Body: CreateUserRequestBody;
-  Reply: CreateUserResponse;
+  Reply: UserResponse;
+}
+
+interface GetUserRoute extends RouteGenericInterface {
+  Params: { id: string };
+  Reply: UserResponse;
 }
 
 export const userRoutes: FastifyPluginCallback = (
@@ -26,7 +32,7 @@ export const userRoutes: FastifyPluginCallback = (
 
     const user = await createUserUseCase(request.body, request.headers.authorization);
 
-    const userResponse: CreateUserResponse = {
+    const userResponse: UserResponse = {
       id: user.id,
       name: user.name,
       email: user.email,
@@ -35,6 +41,26 @@ export const userRoutes: FastifyPluginCallback = (
 
     reply.code(201).send(userResponse);
   });
+
+  fastify.get<GetUserRoute>(
+    '/:id',
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      const user = await getUserByIdUseCase(request.params.id, request.headers.authorization);
+
+      if (!user) {
+        return reply.code(404).send({ message: 'User not found' });
+      }
+
+      const userResponse: UserResponse = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birthDate: user.birthDate,
+      };
+
+      reply.send(userResponse);
+    },
+  );
 
   fastify.setErrorHandler<BaseError>(errorHandler);
 

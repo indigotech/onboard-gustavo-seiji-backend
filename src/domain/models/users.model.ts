@@ -43,4 +43,18 @@ export const UserErrors: Record<string, BaseError> = {
     status: 422,
     name: 'UserInvalidBirthdateError',
   },
+  USER_ID_NOT_FOUND: {
+    code: 'USR_05',
+    message: 'User not found',
+    details: 'No user found with the given ID.',
+    status: 404,
+    name: 'UserNotFoundError',
+  },
+  INVALID_USER_ID: {
+    code: 'USR_06',
+    message: 'Invalid user ID format',
+    details: 'User ID must be a valid integer.',
+    status: 422,
+    name: 'UserInvalidIdError',
+  },
 };
