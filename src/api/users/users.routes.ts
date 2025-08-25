@@ -2,6 +2,7 @@ import { errorHandler } from '@api/common/error-handler.js';
 import { validateTokenUseCase } from '@domain/auth/validate-token.use-case.js';
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
 import { getUserByIdUseCase } from '@domain/users/get-user-by-id.use-case.js';
+import { getUserListUseCase } from '@domain/users/get-user-list.use-case.js';
 import type { BaseError } from '@models/error.model.js';
 import type {
   FastifyInstance,
@@ -21,6 +22,11 @@ interface CreateUserRoute extends RouteGenericInterface {
 interface GetUserRoute extends RouteGenericInterface {
   Params: GetUserPathParams;
   Reply: UserResponse;
+}
+
+interface GetUserListRoute extends RouteGenericInterface {
+  Querystring: { limit?: number };
+  Reply: UserResponse[];
 }
 
 export const userRoutes: FastifyPluginCallback = (
@@ -65,6 +71,23 @@ export const userRoutes: FastifyPluginCallback = (
       reply.send(userResponse);
     },
   );
+
+  fastify.get<GetUserListRoute>('/', async (request: FastifyRequest<GetUserListRoute>, reply: FastifyReply) => {
+    const limit = request.query.limit || 10;
+
+    const users: UserResponse[] = await getUserListUseCase(limit, request.headers.authorization);
+
+    const response = users.map(user => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birthDate: user.birthDate,
+      };
+    });
+
+    reply.code(200).send(response);
+  });
 
   fastify.setErrorHandler<BaseError>(errorHandler);
 
