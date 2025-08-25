@@ -12,7 +12,7 @@ import type {
   RegisterOptions,
   RouteGenericInterface,
 } from 'fastify';
-import type { CreateUserRequestBody, GetUserPathParams, UserResponse } from './users.schema.js';
+import type { CreateUserRequestBody, GetUserListInput, GetUserPathParams, UserResponse } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
   Body: CreateUserRequestBody;
@@ -25,7 +25,7 @@ interface GetUserRoute extends RouteGenericInterface {
 }
 
 interface GetUserListRoute extends RouteGenericInterface {
-  Querystring: { limit?: number };
+  Querystring: GetUserListInput;
   Reply: UserResponse[];
 }
 
@@ -73,9 +73,11 @@ export const userRoutes: FastifyPluginCallback = (
   );
 
   fastify.get<GetUserListRoute>('/', async (request: FastifyRequest<GetUserListRoute>, reply: FastifyReply) => {
+    validateTokenUseCase(request.headers.authorization);
+
     const limit = request.query.limit || 10;
 
-    const users: UserResponse[] = await getUserListUseCase(limit, request.headers.authorization);
+    const users: UserResponse[] = await getUserListUseCase(limit);
 
     const response = users.map(user => {
       return {
