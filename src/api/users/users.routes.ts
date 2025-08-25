@@ -10,7 +10,7 @@ import type {
   RegisterOptions,
   RouteGenericInterface,
 } from 'fastify';
-import type { CreateUserRequestBody, UserResponse } from './users.schema.js';
+import type { CreateUserRequestBody, GetUserInput, UserResponse } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
   Body: CreateUserRequestBody;
@@ -18,7 +18,7 @@ interface CreateUserRoute extends RouteGenericInterface {
 }
 
 interface GetUserRoute extends RouteGenericInterface {
-  Params: { id: string };
+  Params: GetUserInput;
   Reply: UserResponse;
 }
 
