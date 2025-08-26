@@ -103,7 +103,7 @@ export const userRoutes: FastifyPluginCallback = (
         users: userList,
         pagination: {
           totalItems: userCount,
-          totalPages: Math.floor(userCount / limit) + 1,
+          totalPages: Math.ceil(userCount / limit),
         },
       };
 
