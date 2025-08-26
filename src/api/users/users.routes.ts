@@ -86,7 +86,10 @@ export const userRoutes: FastifyPluginCallback = (
 
       const page = request.query.page || 1;
 
-      const users: UserResponse[] = await getUserListUseCase(limit, page);
+      const users: UserResponse[] = await getUserListUseCase({
+        limit,
+        page,
+      });
 
       const userList = users.map(user => {
         return {
@@ -97,7 +100,7 @@ export const userRoutes: FastifyPluginCallback = (
         };
       });
 
-      const userCount = await getUserCountUseCase(request.headers.authorization);
+      const userCount = await getUserCountUseCase();
 
       const response: GetUserListResponse = {
         users: userList,

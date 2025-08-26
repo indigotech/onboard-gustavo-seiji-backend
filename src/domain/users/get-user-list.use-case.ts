@@ -1,9 +1,16 @@
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import { UserErrors } from '@models/users.model.js';
 
-export const getUserListUseCase = async (limit: number, page: number) => {
-  if (page <= 0) {
-    throw UserErrors.PAGE_NOT_FOUND;
+interface GetUserListInput {
+  limit: number;
+  page: number;
+}
+
+export const getUserListUseCase = async (input: GetUserListInput) => {
+  const { limit, page } = input;
+
+  if (page <= 0 || !Number.isInteger(page)) {
+    throw UserErrors.INVALID_PAGE;
   }
 
   const offset = (page - 1) * limit;

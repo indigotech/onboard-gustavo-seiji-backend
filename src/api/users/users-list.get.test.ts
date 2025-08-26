@@ -51,16 +51,97 @@ describe('Get User List', () => {
       birthDate: user.birthDate.toISOString(),
     }));
 
-    expect(response.data.users).to.deep.equal(formattedUserList);
+    expect(response.data.users).to.deep.eq(formattedUserList);
     const userCount = await prisma.user.count();
     const paginationData = {
       totalItems: userCount,
       totalPages: Math.ceil(userCount / 5),
     };
-    expect(response.data.pagination).to.deep.equal(paginationData);
+    expect(response.data.pagination).to.deep.eq(paginationData);
+  });
+
+  it('should return intermediary page', async () => {
+    const userList = await prisma.user.findMany({
+      skip: 3,
+      take: 3,
+      orderBy: { name: 'asc' },
+      omit: {
+        password: true,
+      },
+    });
+
+    const formattedUserList = userList.map(user => ({
+      ...user,
+      birthDate: user.birthDate.toISOString(),
+    }));
+
+    const response = await sendTestRequest(3, 2);
+    expect(response.data.users).to.deep.eq(formattedUserList);
+    const userCount = await prisma.user.count();
+    const paginationData = {
+      totalItems: userCount,
+      totalPages: Math.ceil(userCount / 3),
+    };
+    expect(response.data.pagination).to.deep.eq(paginationData);
+  });
+
+  it('should return last page', async () => {
+    const userList = await prisma.user.findMany({
+      skip: 9,
+      take: 3,
+      orderBy: { name: 'asc' },
+      omit: {
+        password: true,
+      },
+    });
+
+    const formattedUserList = userList.map(user => ({
+      ...user,
+      birthDate: user.birthDate.toISOString(),
+    }));
+
+    const response = await sendTestRequest(3, 4);
+    expect(response.data.users).to.deep.eq(formattedUserList);
+    const userCount = await prisma.user.count();
+    const paginationData = {
+      totalItems: userCount,
+      totalPages: Math.ceil(userCount / 3),
+    };
+    expect(response.data.pagination).to.deep.eq(paginationData);
+  });
+
+  it('should return empty page', async () => {
+    const response = await sendTestRequest(3, 5);
+    expect(response.data.users).to.deep.eq([]);
+    const userCount = await prisma.user.count();
+    const paginationData = {
+      totalItems: userCount,
+      totalPages: Math.ceil(userCount / 3),
+    };
+    expect(response.data.pagination).to.deep.eq(paginationData);
   });
 
   after(async () => {
     await prisma.user.deleteMany();
+  });
+});
+
+describe('Get User List Errors', () => {
+  it('should return invalid page error', async () => {
+    const responseNegative = await sendTestRequest(3, -1);
+    expect(responseNegative.status).to.equal(422);
+    expect(responseNegative.data).to.deep.eq({
+      code: 'USR_07',
+      message: 'Invalid Page',
+      details: 'The requested page should be a valid integer above 0.',
+    });
+
+    const responseFloat = await sendTestRequest(3, 3.2);
+    expect(responseFloat.status).to.equal(422);
+    expect(responseFloat.data).to.deep.eq({
+      code: 'USR_07',
+      message: 'Invalid Page',
+      details: 'The requested page should be a valid integer above 0.',
+    });
   });
 });
