@@ -2,6 +2,7 @@ import { errorHandler } from '@api/common/error-handler.js';
 import { validateTokenUseCase } from '@domain/auth/validate-token.use-case.js';
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
 import { getUserByIdUseCase } from '@domain/users/get-user-by-id.use-case.js';
+import { getUserCountUseCase } from '@domain/users/get-user-count.use-case.js';
 import { getUserListUseCase } from '@domain/users/get-user-list.use-case.js';
 import type { BaseError } from '@models/error.model.js';
 import type {
@@ -13,6 +14,7 @@ import type {
   RouteGenericInterface,
 } from 'fastify';
 import type { CreateUserRequestBody, GetUserListQueryParams, GetUserPathParams, UserResponse } from './users.schema.js';
+import { type GetUserListResponse, getUserListSchema } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
   Body: CreateUserRequestBody;
@@ -72,24 +74,45 @@ export const userRoutes: FastifyPluginCallback = (
     },
   );
 
-  fastify.get<GetUserListRoute>('/', async (request: FastifyRequest<GetUserListRoute>, reply: FastifyReply) => {
-    validateTokenUseCase(request.headers.authorization);
+  fastify.get<GetUserListRoute>(
+    '/',
+    {
+      schema: getUserListSchema,
+    },
+    async (request: FastifyRequest<GetUserListRoute>, reply: FastifyReply) => {
+      validateTokenUseCase(request.headers.authorization);
 
-    const limit = request.query.limit || 10;
+      const limit = request.query.limit || 10;
 
-    const users: UserResponse[] = await getUserListUseCase(limit);
+      const page = request.query.page || 1;
 
-    const response = users.map(user => {
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        birthDate: user.birthDate,
+      const users: UserResponse[] = await getUserListUseCase({
+        limit,
+        page,
+      });
+
+      const userList = users.map(user => {
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          birthDate: user.birthDate,
+        };
+      });
+
+      const userCount = await getUserCountUseCase();
+
+      const response: GetUserListResponse = {
+        users: userList,
+        pagination: {
+          totalItems: userCount,
+          totalPages: Math.ceil(userCount / limit),
+        },
       };
-    });
 
-    reply.code(200).send(response);
-  });
+      reply.code(200).send(response);
+    },
+  );
 
   fastify.setErrorHandler<BaseError>(errorHandler);
 

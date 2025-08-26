@@ -57,4 +57,11 @@ export const UserErrors: Record<string, BaseError> = {
     status: 422,
     name: 'UserInvalidIdError',
   },
+  INVALID_PAGE: {
+    code: 'USR_07',
+    message: 'Invalid Page',
+    details: 'The requested page should be a valid integer above 0.',
+    status: 422,
+    name: 'UserInvalidPageError',
+  },
 };

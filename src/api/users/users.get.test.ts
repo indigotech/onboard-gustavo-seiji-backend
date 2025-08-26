@@ -44,7 +44,7 @@ describe('Get User', () => {
     });
 
     expect(response.status).to.equal(200);
-    expect(response.data).to.deep.equal(formattedUser);
+    expect(response.data).to.deep.eq(formattedUser);
   });
 
   it('should return 404 for non-existent user', async () => {
@@ -58,7 +58,7 @@ describe('Get User', () => {
     });
 
     expect(response.status).to.equal(404);
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.deep.eq({
       message: 'User not found',
       code: 'USR_05',
       details: 'No user found with the given ID.',
@@ -76,7 +76,7 @@ describe('Get User', () => {
     });
 
     expect(response.status).to.equal(422);
-    expect(response.data).to.deep.equal({
+    expect(response.data).to.deep.eq({
       code: 'USR_06',
       message: 'Invalid user ID format',
       details: 'User ID must be a valid integer.',
