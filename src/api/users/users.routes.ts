@@ -1,5 +1,7 @@
 import { errorHandler } from '@api/common/error-handler.js';
+import { validateTokenUseCase } from '@domain/auth/validate-token.use-case.js';
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
+import { getUserByIdUseCase } from '@domain/users/get-user-by-id.use-case.js';
 import type { BaseError } from '@models/error.model.js';
 import type {
   FastifyInstance,
@@ -9,11 +11,16 @@ import type {
   RegisterOptions,
   RouteGenericInterface,
 } from 'fastify';
-import type { CreateUserRequestBody, CreateUserResponse } from './users.schema.js';
+import type { CreateUserRequestBody, GetUserPathParams, UserResponse } from './users.schema.js';
 
 interface CreateUserRoute extends RouteGenericInterface {
   Body: CreateUserRequestBody;
-  Reply: CreateUserResponse;
+  Reply: UserResponse;
+}
+
+interface GetUserRoute extends RouteGenericInterface {
+  Params: GetUserPathParams;
+  Reply: UserResponse;
 }
 
 export const userRoutes: FastifyPluginCallback = (
@@ -24,9 +31,11 @@ export const userRoutes: FastifyPluginCallback = (
   fastify.post<CreateUserRoute>('/', async (request: FastifyRequest<CreateUserRoute>, reply: FastifyReply) => {
     console.info('Received user creation request with data', request.body);
 
-    const user = await createUserUseCase(request.body, request.headers.authorization);
+    validateTokenUseCase(request.headers.authorization);
 
-    const userResponse: CreateUserResponse = {
+    const user = await createUserUseCase(request.body);
+
+    const userResponse: UserResponse = {
       id: user.id,
       name: user.name,
       email: user.email,
@@ -35,6 +44,27 @@ export const userRoutes: FastifyPluginCallback = (
 
     reply.code(201).send(userResponse);
   });
+
+  fastify.get<GetUserRoute>(
+    '/:id',
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      validateTokenUseCase(request.headers.authorization);
+      const user = await getUserByIdUseCase(request.params.id);
+
+      if (!user) {
+        return reply.code(404).send({ message: 'User not found' });
+      }
+
+      const userResponse: UserResponse = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birthDate: user.birthDate,
+      };
+
+      reply.send(userResponse);
+    },
+  );
 
   fastify.setErrorHandler<BaseError>(errorHandler);
 
