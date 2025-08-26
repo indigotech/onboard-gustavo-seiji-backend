@@ -4,6 +4,6 @@ export interface CreateUserRequestBody extends UserInput {}
 
 export interface UserResponse extends User {}
 
-export interface GetUserInput {
+export interface GetUserPathParams {
   id: string;
 }

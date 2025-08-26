@@ -48,7 +48,7 @@ export const UserErrors: Record<string, BaseError> = {
     message: 'User not found',
     details: 'No user found with the given ID.',
     status: 404,
-    name: 'UserNotFoundError',
+    name: 'UserIdNotFoundError',
   },
   INVALID_USER_ID: {
     code: 'USR_06',

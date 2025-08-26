@@ -21,23 +21,30 @@ describe('Get User', () => {
   it('should return user', async () => {
     const validToken = `Bearer ${jwt.sign({ userId: 'test-user-id' }, process.env.JWT_SECRET, { expiresIn: '1h' })}`;
 
-    const userId = (await prisma.user.findFirst({
+    const user = (await prisma.user.findFirst({
       where: {
         email: USER_TO_CREATE.email,
       },
+      omit: {
+        password: true,
+      },
     }))!;
 
-    const response = await axios.get(`http://localhost:8080/users/${userId.id}`, {
+    const formattedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate.toISOString(),
+    };
+
+    const response = await axios.get(`http://localhost:8080/users/${user.id}`, {
       headers: {
         Authorization: validToken,
       },
     });
 
     expect(response.status).to.equal(200);
-    expect(response.data.id).to.equal(userId.id);
-    expect(response.data.name).to.equal(USER_TO_CREATE.name);
-    expect(response.data.email).to.equal(USER_TO_CREATE.email);
-    expect(response.data.birthDate).to.equal(USER_TO_CREATE.birthDate);
+    expect(response.data).to.deep.equal(formattedUser);
   });
 
   it('should return 404 for non-existent user', async () => {
@@ -47,12 +54,14 @@ describe('Get User', () => {
       headers: {
         Authorization: validToken,
       },
-      validateStatus: (status: number) => status === 404,
+      validateStatus: () => true,
     });
 
     expect(response.status).to.equal(404);
     expect(response.data).to.deep.equal({
       message: 'User not found',
+      code: 'USR_05',
+      details: 'No user found with the given ID.',
     });
   });
 
@@ -63,7 +72,7 @@ describe('Get User', () => {
       headers: {
         Authorization: validToken,
       },
-      validateStatus: (status: number) => status === 422,
+      validateStatus: () => true,
     });
 
     expect(response.status).to.equal(422);
