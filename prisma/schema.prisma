@@ -12,4 +12,20 @@ model User {
     email     String   @unique @db.VarChar(100)
     password  String   @db.VarChar(255)
     birthDate DateTime @db.Date()
+
+    addresses  Address[]
+}
+
+model Address {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  zipCode   String   @db.VarChar(20)
+  street    String   @db.VarChar(100)
+  streetNumber String @db.VarChar(10)
+  complement String? @db.VarChar(100)
+  neighborhood String @db.VarChar(100)
+  city       String   @db.VarChar(100)
+  state      String   @db.VarChar(100)
+
+  user      User     @relation(fields: [userId], references: [id])
 }
