@@ -1,3 +1,4 @@
+import type { Pagination } from '@api/common/pagination.schema.js';
 import type { User, UserInput } from '@domain/models/users.model.js';
 
 export interface CreateUserRequestBody extends UserInput {}
@@ -9,4 +10,14 @@ export interface GetUserPathParams {
 }
 export interface GetUserListQueryParams {
   limit?: number;
+  page: number;
 }
+
+export interface GetUserListResponse {
+  users: UserResponse[];
+  pagination: Pagination;
+}
+
+export const getUserListSchema = {
+  querystring: { type: 'object', properties: { page: { type: 'number' }, limit: { type: 'number' } } },
+};

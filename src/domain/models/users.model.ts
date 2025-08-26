@@ -57,4 +57,11 @@ export const UserErrors: Record<string, BaseError> = {
     status: 422,
     name: 'UserInvalidIdError',
   },
+  PAGE_NOT_FOUND: {
+    code: 'USR_07',
+    message: 'Page not found',
+    details: 'The requested page does not exist.',
+    status: 404,
+    name: 'UserPageNotFoundError',
+  },
 };
