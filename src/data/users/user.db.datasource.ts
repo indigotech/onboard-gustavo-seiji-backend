@@ -40,9 +40,19 @@ const findById = async (id: number): Promise<User | null> => {
   });
 };
 
+const getList = async (limit: number): Promise<User[]> => {
+  return prisma.user.findMany({
+    take: limit,
+    orderBy: {
+      name: 'asc',
+    },
+  });
+};
+
 export const UserDbDatasource = {
   create,
   createMany,
   findByEmail,
   findById,
+  getList,
 };
