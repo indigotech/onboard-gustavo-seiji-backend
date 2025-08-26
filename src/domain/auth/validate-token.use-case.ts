@@ -1,7 +1,7 @@
 import { CommonErrors } from '@models/error.model.js';
 import jwt from 'jsonwebtoken';
 
-export const validateToken = (token?: string): void => {
+export const validateTokenUseCase = (token?: string): void => {
   if (!token) {
     throw CommonErrors.NOT_AUTHENTICATED;
   }

@@ -1,7 +1,6 @@
 import { hash } from '@core/encryption/hash.js';
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import { type User, UserErrors, type UserInput } from '@domain/models/users.model.js';
-import { validateToken } from '@util/validate-token.util.js';
 
 const LETTER_REGEX = /[a-z]/i;
 
@@ -9,9 +8,8 @@ const DIGIT_REGEX = /\d/;
 
 const EMAIL_REGEX = /([@][a-z]+.com)/i;
 
-export const createUserUseCase = async (data: UserInput, token?: string): Promise<User> => {
+export const createUserUseCase = async (data: UserInput): Promise<User> => {
   validateFields(data);
-  validateToken(token);
 
   const user = await UserDbDatasource.findByEmail(data.email);
 

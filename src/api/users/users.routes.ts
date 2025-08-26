@@ -1,4 +1,5 @@
 import { errorHandler } from '@api/common/error-handler.js';
+import { validateTokenUseCase } from '@domain/auth/validate-token.use-case.js';
 import { createUserUseCase } from '@domain/users/create-user.use-case.js';
 import { getUserByIdUseCase } from '@domain/users/get-user-by-id.use-case.js';
 import type { BaseError } from '@models/error.model.js';
@@ -30,7 +31,9 @@ export const userRoutes: FastifyPluginCallback = (
   fastify.post<CreateUserRoute>('/', async (request: FastifyRequest<CreateUserRoute>, reply: FastifyReply) => {
     console.info('Received user creation request with data', request.body);
 
-    const user = await createUserUseCase(request.body, request.headers.authorization);
+    validateTokenUseCase(request.headers.authorization);
+
+    const user = await createUserUseCase(request.body);
 
     const userResponse: UserResponse = {
       id: user.id,
@@ -45,7 +48,8 @@ export const userRoutes: FastifyPluginCallback = (
   fastify.get<GetUserRoute>(
     '/:id',
     async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
-      const user = await getUserByIdUseCase(request.params.id, request.headers.authorization);
+      validateTokenUseCase(request.headers.authorization);
+      const user = await getUserByIdUseCase(request.params.id);
 
       if (!user) {
         return reply.code(404).send({ message: 'User not found' });

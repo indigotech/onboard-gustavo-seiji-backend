@@ -1,10 +1,7 @@
 import { UserDbDatasource } from '@data/users/user.db.datasource.js';
 import { UserErrors } from '@models/users.model.js';
-import { validateToken } from '@src/util/validate-token.util.js';
 
-export const getUserByIdUseCase = (id: string, token?: string) => {
-  validateToken(token);
-
+export const getUserByIdUseCase = (id: string) => {
   const userIdInt = parseInt(id, 10);
 
   if (Number.isNaN(userIdInt)) {
