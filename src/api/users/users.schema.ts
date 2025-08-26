@@ -7,6 +7,6 @@ export interface UserResponse extends User {}
 export interface GetUserPathParams {
   id: string;
 }
-export interface GetUserListInput {
+export interface GetUserListQueryParams {
   limit?: number;
 }
