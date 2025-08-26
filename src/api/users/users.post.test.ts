@@ -35,6 +35,7 @@ describe('User Creation', () => {
       name: USER_TO_CREATE.name,
       email: USER_TO_CREATE.email,
       birthDate: USER_TO_CREATE.birthDate,
+      addresses: [],
     };
 
     expect(response.data).to.deep.eq(expectedResponse);

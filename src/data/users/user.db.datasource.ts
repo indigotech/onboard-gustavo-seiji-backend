@@ -1,9 +1,10 @@
 import { prisma } from '@core/db/db.js';
 import type { User, UserInput } from '@domain/models/users.model.js';
 import type { Prisma, User as UserEntity } from '@prisma/client';
+import { mapUser } from './user.db.mapper.js';
 
 const create = async (data: UserInput): Promise<User> => {
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email: data.email,
       password: data.password,
@@ -11,6 +12,11 @@ const create = async (data: UserInput): Promise<User> => {
       birthDate: new Date(Date.parse(data.birthDate)),
     },
   });
+
+  return {
+    addresses: [],
+    ...user,
+  };
 };
 
 const createMany = async (data: UserInput[]): Promise<Prisma.BatchPayload> => {
@@ -33,21 +39,48 @@ const findByEmail = async (email: string): Promise<UserEntity | null> => {
 };
 
 const findById = async (id: number): Promise<User | null> => {
-  return prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       id,
     },
   });
+
+  const addresses = await prisma.address.findMany({
+    where: {
+      userId: id,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  return mapUser(user, addresses);
 };
 
 const getList = async (limit: number, offset: number): Promise<User[]> => {
-  return prisma.user.findMany({
+  const users = await prisma.user.findMany({
     take: limit,
     skip: offset,
     orderBy: {
       name: 'asc',
     },
   });
+
+  const addresses = await prisma.address.findMany({
+    where: {
+      userId: {
+        in: users.map(user => user.id),
+      },
+    },
+  });
+
+  return users.map(user =>
+    mapUser(
+      user,
+      addresses.filter(address => address.userId === user.id),
+    ),
+  );
 };
 
 const getCount = async (): Promise<number> => {

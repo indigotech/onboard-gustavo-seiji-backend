@@ -48,6 +48,7 @@ export const userRoutes: FastifyPluginCallback = (
       name: user.name,
       email: user.email,
       birthDate: user.birthDate,
+      addresses: user.addresses,
     };
 
     reply.code(201).send(userResponse);
@@ -68,6 +69,7 @@ export const userRoutes: FastifyPluginCallback = (
         name: user.name,
         email: user.email,
         birthDate: user.birthDate,
+        addresses: user.addresses,
       };
 
       reply.send(userResponse);
@@ -97,6 +99,7 @@ export const userRoutes: FastifyPluginCallback = (
           name: user.name,
           email: user.email,
           birthDate: user.birthDate,
+          addresses: user.addresses,
         };
       });
 

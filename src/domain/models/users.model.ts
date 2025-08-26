@@ -1,3 +1,4 @@
+import type { Address } from './address.model.js';
 import type { BaseError } from './error.model.js';
 
 export interface User {
@@ -5,6 +6,7 @@ export interface User {
   email: string;
   name: string;
   birthDate: Date;
+  addresses: Address[];
 }
 
 export interface UserInput {
