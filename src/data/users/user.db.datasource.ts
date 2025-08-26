@@ -1,6 +1,6 @@
 import { prisma } from '@core/db/db.js';
 import type { User, UserInput } from '@domain/models/users.model.js';
-import type { User as UserEntity } from '@prisma/client';
+import type { Prisma, User as UserEntity } from '@prisma/client';
 
 const create = async (data: UserInput): Promise<User> => {
   return prisma.user.create({
@@ -10,6 +10,17 @@ const create = async (data: UserInput): Promise<User> => {
       name: data.name,
       birthDate: new Date(Date.parse(data.birthDate)),
     },
+  });
+};
+
+const createMany = async (data: UserInput[]): Promise<Prisma.BatchPayload> => {
+  return prisma.user.createMany({
+    data: data.map(user => ({
+      email: user.email,
+      password: user.password,
+      name: user.name,
+      birthDate: new Date(Date.parse(user.birthDate)),
+    })),
   });
 };
 
@@ -31,6 +42,7 @@ const findById = async (id: number): Promise<User | null> => {
 
 export const UserDbDatasource = {
   create,
+  createMany,
   findByEmail,
   findById,
 };

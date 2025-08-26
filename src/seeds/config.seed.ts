@@ -3,5 +3,5 @@ import { configureEnv } from '@core/env/env.js';
 
 export const configureSeeds = async (envPath?: string) => {
   await configureDatabase();
-  await configureEnv(envPath || '.env');
+  await configureEnv(envPath ?? '.env');
 };
