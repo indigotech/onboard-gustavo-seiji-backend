@@ -1,5 +1,4 @@
 import type { BaseError } from './error.model.js';
-import type { User } from './users.model.js';
 
 export interface AuthInput {
   email: string;
@@ -8,7 +7,12 @@ export interface AuthInput {
 }
 
 export interface Auth {
-  user: User;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    birthDate: string;
+  };
   token: string;
 }
 

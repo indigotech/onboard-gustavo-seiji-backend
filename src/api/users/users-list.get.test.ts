@@ -49,6 +49,7 @@ describe('Get User List', () => {
     const formattedUserList = userList.map(user => ({
       ...user,
       birthDate: user.birthDate.toISOString(),
+      addresses: [],
     }));
 
     expect(response.data.users).to.deep.eq(formattedUserList);
@@ -73,6 +74,7 @@ describe('Get User List', () => {
     const formattedUserList = userList.map(user => ({
       ...user,
       birthDate: user.birthDate.toISOString(),
+      addresses: [],
     }));
 
     const response = await sendTestRequest(3, 2);
@@ -98,6 +100,7 @@ describe('Get User List', () => {
     const formattedUserList = userList.map(user => ({
       ...user,
       birthDate: user.birthDate.toISOString(),
+      addresses: [],
     }));
 
     const response = await sendTestRequest(3, 4);

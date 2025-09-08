@@ -35,6 +35,7 @@ describe('Get User', () => {
       name: user.name,
       email: user.email,
       birthDate: user.birthDate.toISOString(),
+      addresses: [],
     };
 
     const response = await axios.get(`http://localhost:8080/users/${user.id}`, {
